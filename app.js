@@ -319,7 +319,7 @@
   if (canvas) {
     const ctx = canvas.getContext('2d');
     let w, h, dpr, t = 0, raf, particles = [];
-    const NAVY = '11,30,63', ORANGE = '140,31,46';
+    const NAVY = '11,30,63', ORANGE = '178, 49, 66';
 
     function resize() {
       dpr = Math.min(window.devicePixelRatio || 1, 2);
