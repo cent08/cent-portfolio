@@ -18,9 +18,22 @@
   /* ── year ── */
   const yr = $('#year'); if (yr) yr.textContent = new Date().getFullYear();
 
-  /* ── navbar scroll state ── */
+  /* ── navbar scroll state + scroll progress bar ── */
   const navbar = $('#navbar');
-  const onScroll = () => navbar && navbar.classList.toggle('scrolled', window.scrollY > 24);
+  const progress = $('#scrollProgress');
+  let scrollTick = false;
+  const onScroll = () => {
+    if (scrollTick) return;
+    scrollTick = true;
+    requestAnimationFrame(() => {
+      if (navbar) navbar.classList.toggle('scrolled', window.scrollY > 24);
+      if (progress) {
+        const max = document.documentElement.scrollHeight - window.innerHeight;
+        progress.style.width = (max > 0 ? (window.scrollY / max) * 100 : 0) + '%';
+      }
+      scrollTick = false;
+    });
+  };
   document.addEventListener('scroll', onScroll, { passive: true });
   onScroll();
 
@@ -249,7 +262,7 @@
     if (!revealObserver) {
       revealObserver = new IntersectionObserver((entries) => {
         entries.forEach((e, i) => {
-          if (e.isIntersecting) { setTimeout(() => e.target.classList.add('in'), (i % 6) * 70); revealObserver.unobserve(e.target); }
+          if (e.isIntersecting) { setTimeout(() => e.target.classList.add('in'), (i % 8) * 95); revealObserver.unobserve(e.target); }
         });
       }, { threshold: 0.12, rootMargin: '0px 0px -8% 0px' });
     }
