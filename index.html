@@ -53,8 +53,10 @@
       background: var(--cream);
       color: var(--navy);
       line-height: 1.65;
-      overflow-x: hidden;
       -webkit-font-smoothing: antialiased;
+      /* horizontal overflow is contained by html { overflow-x: clip }.
+         Do NOT set overflow on body: it makes body the scroller and breaks
+         ScrollTrigger pinning. */
     }
     ::selection { background: var(--orange); color: #fff; }
     a { color: inherit; text-decoration: none; }
@@ -202,6 +204,9 @@
     .step__d { color: var(--muted); font-size: 15px; margin-top: 8px; }
     .step__arrow { position: absolute; top: 50%; right: -23px; transform: translateY(-50%); color: var(--divider); font-size: 26px; z-index: 2; }
     .process__steps .step:last-child .step__arrow { display: none; }
+    /* steps animate in one-by-one from the right via GSAP ScrollTrigger.
+       No hidden state in CSS, so tiles always show even if GSAP fails to load. */
+    .process__steps .step-reveal { will-change: transform, opacity; }
 
     /* ════════ SERVICES (draw-on-hover icons) ════════ */
     .cards--tools { display: grid; grid-template-columns: repeat(3, 1fr); gap: 22px; }
@@ -548,28 +553,28 @@
     </section>
 
     <!-- ═══ PROCESS ═══ -->
-    <section class="section">
+    <section class="section" id="process">
       <div class="container">
         <div class="section__head section__head--center reveal">
           <h2 class="section__title">Map. Build. Automate.</h2>
           <p class="section__sub">A simple path from "this is driving me crazy" to "I never think about it again."</p>
         </div>
         <div class="process__steps">
-          <div class="step reveal">
+          <div class="step step-reveal">
             <div class="step__n">STEP 01</div>
             <div class="step__icon"><i class="ph ph-magnifying-glass"></i></div>
             <h3 class="step__t">Map</h3>
             <p class="step__d">We find the repetitive work worth automating and map exactly how it flows today, end to end.</p>
             <i class="ph ph-caret-right step__arrow"></i>
           </div>
-          <div class="step reveal">
+          <div class="step step-reveal">
             <div class="step__n">STEP 02</div>
             <div class="step__icon"><i class="ph ph-wrench"></i></div>
             <h3 class="step__t">Build</h3>
             <p class="step__d">I wire it up in n8n, Make or GoHighLevel, connect the APIs, and test it against your real data.</p>
             <i class="ph ph-caret-right step__arrow"></i>
           </div>
-          <div class="step reveal">
+          <div class="step step-reveal">
             <div class="step__n">STEP 03</div>
             <div class="step__icon"><i class="ph ph-rocket-launch"></i></div>
             <h3 class="step__t">Automate</h3>
@@ -840,6 +845,8 @@
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
   <script src="app.js"></script>
 </body>
 </html>

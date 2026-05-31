@@ -269,6 +269,47 @@
     $$('.reveal:not(.in)').forEach(el => revealObserver.observe(el));
   }
 
+  /* ── process steps: pin the section and reveal each tile as the user scrolls ── */
+  (function initStepReveal() {
+    const steps = $$('.process__steps .step-reveal');
+    if (!steps.length) return;
+    // Reduced motion or GSAP unavailable: leave tiles in their natural visible state.
+    if (reduceMotion || !window.gsap || !window.ScrollTrigger) return;
+    gsap.registerPlugin(ScrollTrigger);
+    const isMobile = window.matchMedia('(max-width: 720px)').matches;
+
+    if (isMobile) {
+      // On mobile (stacked, no pin): simple one-by-one reveal on scroll.
+      gsap.set(steps, { autoAlpha: 0, y: 40, scale: 0.96 });
+      gsap.to(steps, {
+        autoAlpha: 1, y: 0, scale: 1, duration: 0.6, ease: 'power3.out', stagger: 0.25,
+        scrollTrigger: { trigger: '.process__steps', start: 'top 82%', once: true }
+      });
+      return;
+    }
+
+    // Desktop: pin the section; each tile slides in from the right as the user keeps scrolling.
+    gsap.set(steps, { autoAlpha: 0, x: 90, scale: 0.96 });
+    const tl = gsap.timeline({
+      scrollTrigger: {
+        trigger: '#process',
+        start: 'top top',
+        end: '+=' + (steps.length * 420),
+        pin: true,
+        scrub: 0.6,
+        anticipatePin: 1,
+        invalidateOnRefresh: true
+      }
+    });
+    steps.forEach((s) => {
+      tl.to(s, { autoAlpha: 1, x: 0, scale: 1, ease: 'power3.out', duration: 1 })
+        .to({}, { duration: 0.45 }); // brief hold before the next tile
+    });
+    // recalc trigger positions after fonts / images settle
+    window.addEventListener('load', () => ScrollTrigger.refresh());
+    setTimeout(() => ScrollTrigger.refresh(), 1800); // after the intro loader clears
+  })();
+
   /* ── stat count-up ── */
   function countUp(el) {
     const target = +el.getAttribute('data-target'), suffix = el.getAttribute('data-suffix') || '';
