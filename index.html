@@ -405,6 +405,20 @@
     .form-msg.ok { display: block; color: #157a4c; background: rgba(33,195,115,0.12); }
     .form-msg.err { display: block; color: #c43a2c; background: rgba(216,72,58,0.10); }
 
+    /* chat assistant callout */
+    .chat-hint { position: relative; overflow: hidden; display: flex; align-items: center; gap: 13px; margin: 20px auto 0; padding: 13px 20px; max-width: 560px; border: 1px solid var(--divider); border-radius: var(--radius-pill); background: var(--card); cursor: pointer; text-align: left; font-family: inherit; transition: transform .25s var(--ease), border-color .25s; animation: hintglow 3s ease-in-out infinite; }
+    .chat-hint::after { content: ''; position: absolute; top: 0; bottom: 0; left: -45%; width: 38%; background: linear-gradient(100deg, transparent, rgba(255,255,255,0.5), transparent); transform: skewX(-18deg); pointer-events: none; animation: hintshine 4.2s ease-in-out infinite; }
+    .chat-hint:hover { transform: translateY(-2px); border-color: rgba(178,49,66,0.45); }
+    .chat-hint__icon { width: 36px; height: 36px; border-radius: 10px; display: grid; place-items: center; background: rgba(178,49,66,0.12); color: var(--orange); font-size: 19px; flex-shrink: 0; }
+    .chat-hint__icon i { display: block; animation: hintpulse 2s ease-in-out infinite; }
+    .chat-hint__txt { font-size: 14px; color: var(--navy); font-weight: 500; line-height: 1.4; }
+    .chat-hint__txt b { color: var(--orange); font-weight: 600; }
+    .chat-hint__arrow { color: var(--orange); font-size: 17px; margin-left: auto; flex-shrink: 0; animation: hintarrow 1.8s ease-in-out infinite; }
+    @keyframes hintpulse { 0%,100% { transform: scale(1); } 50% { transform: scale(1.14); } }
+    @keyframes hintglow { 0%,100% { box-shadow: 0 14px 40px -22px rgba(11,30,63,0.28); } 50% { box-shadow: 0 16px 46px -16px rgba(178,49,66,0.5); } }
+    @keyframes hintshine { 0% { left: -45%; } 45%,100% { left: 130%; } }
+    @keyframes hintarrow { 0%,100% { transform: translate(0,0); } 50% { transform: translate(3px,3px); } }
+
     /* ════════ FOOTER ════════ */
     .footer { background: var(--navy-ink); border-top: 1px solid rgba(255,255,255,0.10); padding: 38px 0; }
     .footer .container { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
@@ -779,6 +793,11 @@
           <span class="eyebrow">Contact</span>
           <h2 class="section__title">Let's talk automation</h2>
           <p class="section__sub">Tell me about your project or the process you want gone. I reply as soon as I can.</p>
+          <button class="chat-hint" id="chatHint" type="button">
+            <span class="chat-hint__icon"><i class="ph ph-chat-circle-dots"></i></span>
+            <span class="chat-hint__txt">Want quick answers? <b>Chat with my AI assistant</b> to learn more about my work or book a call right now.</span>
+            <i class="ph ph-arrow-down-right chat-hint__arrow"></i>
+          </button>
         </div>
         <div class="contact__grid">
           <div class="contact-info reveal reveal--left">
@@ -837,16 +856,18 @@
   <!-- ═══ CHAT WIDGET (live n8n assistant) ═══ -->
   <script>
     window.ChatWidgetConfig = {
-      webhook: { url: 'https://s6n4a0zu.rpcld.net/webhook/22e923bb-70cd-45b5-a343-5b6fca03107e/chat', route: 'general' },
+      webhook: { url: 'https://s6n4a0zu.rpcld.net/webhook/cr-chat-standalone', route: 'general' },
       branding: {
         logo: '/images/chat-logo.png?v=2',
         name: 'CentRobles AI',
         welcomeText: 'Hi, how can I help?',
         responseTimeText: 'My AI assistant replies right away'
       },
-      style: { primaryColor: '#B23142', secondaryColor: '#C9505F', position: 'right', backgroundColor: '#FBFBF6', fontColor: '#0B1E3F' }
+      style: { primaryColor: '#B23142', secondaryColor: '#C9505F', position: 'right', backgroundColor: '#FBFBF6', fontColor: '#0B1E3F' },
+      // Voice agent (Retell): n8n web-call-token webhook + Retell agent id.
+      retell: { tokenUrl: 'https://s6n4a0zu.rpcld.net/webhook/retell/web-call-token', agentId: 'agent_fecad909eba36992b9fe183c44' }
     };
-    (function(){ var s=document.createElement('script'); s.src='/chat-widget.js'; s.defer=true; document.body.appendChild(s); })();
+    (function(){ var s=document.createElement('script'); s.src='/chat-widget.js?v=' + Date.now(); s.defer=true; document.body.appendChild(s); })();
   </script>
 
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>

@@ -352,17 +352,19 @@
 
         .n8n-chat-widget .voice-call-content {
             flex: 1;
+            min-height: 0;
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
-            padding: 40px 20px;
-            gap: 24px;
+            justify-content: flex-start;
+            padding: 14px 16px 16px;
+            gap: 6px;
         }
 
         .n8n-chat-widget .voice-animation {
-            width: 120px;
-            height: 120px;
+            width: 52px;
+            height: 52px;
+            flex-shrink: 0;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -371,7 +373,7 @@
 
         .n8n-chat-widget .voice-animation.listening::before {
             content: '🎧';
-            font-size: 60px;
+            font-size: 30px;
             animation: glow-pulse 2s ease-in-out infinite;
         }
 
@@ -388,45 +390,45 @@
 
         .n8n-chat-widget .voice-animation.talking {
             display: flex;
-            gap: 6px;
+            gap: 4px;
             align-items: flex-end;
         }
 
         .n8n-chat-widget .voice-animation.talking span {
-            width: 8px;
+            width: 5px;
             background: linear-gradient(135deg, var(--chat--color-primary) 0%, var(--chat--color-secondary) 100%);
             border-radius: 4px;
             animation: wave 1.2s ease-in-out infinite;
         }
 
         .n8n-chat-widget .voice-animation.talking span:nth-child(1) {
-            height: 30px;
+            height: 14px;
             animation-delay: 0s;
         }
 
         .n8n-chat-widget .voice-animation.talking span:nth-child(2) {
-            height: 50px;
+            height: 26px;
             animation-delay: 0.2s;
         }
 
         .n8n-chat-widget .voice-animation.talking span:nth-child(3) {
-            height: 40px;
+            height: 20px;
             animation-delay: 0.4s;
         }
 
         .n8n-chat-widget .voice-animation.talking span:nth-child(4) {
-            height: 60px;
+            height: 30px;
             animation-delay: 0.6s;
         }
 
         .n8n-chat-widget .voice-animation.talking span:nth-child(5) {
-            height: 35px;
+            height: 16px;
             animation-delay: 0.8s;
         }
 
         .n8n-chat-widget .voice-animation.thinking::before {
             content: '🤔';
-            font-size: 60px;
+            font-size: 30px;
             animation: thinking-pulse 1.5s ease-in-out infinite;
         }
 
@@ -495,20 +497,24 @@
         }
 
         .n8n-chat-widget .voice-status-text {
-            font-size: 24px;
+            font-size: 13px;
             font-weight: 600;
+            letter-spacing: 0.02em;
             color: var(--chat--color-font);
             text-align: center;
+            flex-shrink: 0;
         }
 
         .n8n-chat-widget .voice-call-btn {
-            padding: 16px 32px;
+            margin-top: auto;
+            flex-shrink: 0;
+            padding: 13px 30px;
             background: linear-gradient(135deg, var(--chat--color-primary) 0%, var(--chat--color-secondary) 100%);
             color: white;
             border: none;
             border-radius: 30px;
             cursor: pointer;
-            font-size: 16px;
+            font-size: 15px;
             font-weight: 500;
             font-family: inherit;
             transition: transform 0.2s;
@@ -541,12 +547,7 @@
             }
 
             .n8n-chat-widget .voice-call-content {
-                padding: 20px;
-            }
-
-            .n8n-chat-widget .voice-animation {
-                width: 100px;
-                height: 100px;
+                padding: 16px 18px 18px;
             }
         }
     `;
@@ -561,6 +562,19 @@
     const styleSheet = document.createElement('style');
     styleSheet.textContent = styles;
     document.head.appendChild(styleSheet);
+
+    // Extra styles for the live voice transcript, connecting spinner, lead chip
+    const extraStyles = document.createElement('style');
+    extraStyles.textContent = `
+        .n8n-chat-widget .voice-transcript { width: 100%; flex: 1; min-height: 0; overflow-y: auto; margin-top: 6px; padding: 0 4px; display: flex; flex-direction: column; gap: 8px; }
+        .n8n-chat-widget .voice-transcript:empty { display: none; }
+        .n8n-chat-widget .voice-animation.connecting::after { content: ''; display: block; width: 30px; height: 30px; border: 3px solid rgba(0,0,0,0.12); border-top-color: var(--n8n-chat-primary-color); border-radius: 50%; animation: cw-spin 0.8s linear infinite; }
+        @keyframes cw-spin { to { transform: rotate(360deg); } }
+        .n8n-chat-widget .chat-message.bot a { color: var(--n8n-chat-primary-color); text-decoration: underline; }
+        .n8n-chat-widget .chat-message.bot ul { margin: 6px 0 6px 18px; }
+        .n8n-chat-widget .lead-chip { align-self: center; font-size: 12px; font-weight: 600; color: #157a4c; background: rgba(33,195,115,0.14); padding: 5px 12px; border-radius: 20px; margin: 4px 0; }
+    `;
+    document.head.appendChild(extraStyles);
 
     // Default configuration
     const defaultConfig = {
@@ -584,15 +598,20 @@
             position: 'right',
             backgroundColor: '#ffffff',
             fontColor: '#333333'
+        },
+        retell: {
+            tokenUrl: '',
+            agentId: ''
         }
     };
 
     // Merge user config with defaults
-    const config = window.ChatWidgetConfig ? 
+    const config = window.ChatWidgetConfig ?
         {
             webhook: { ...defaultConfig.webhook, ...window.ChatWidgetConfig.webhook },
             branding: { ...defaultConfig.branding, ...window.ChatWidgetConfig.branding },
-            style: { ...defaultConfig.style, ...window.ChatWidgetConfig.style }
+            style: { ...defaultConfig.style, ...window.ChatWidgetConfig.style },
+            retell: { ...defaultConfig.retell, ...(window.ChatWidgetConfig.retell || {}) }
         } : defaultConfig;
 
     // Prevent multiple initializations
@@ -668,6 +687,7 @@
             <div class="voice-call-content">
                 <div class="voice-animation" id="voice-animation"></div>
                 <div class="voice-status-text" id="voice-status">Ready to talk</div>
+                <div class="voice-transcript" id="voice-transcript"></div>
                 <button class="voice-call-btn" id="voice-call-btn">
                     <svg class="voice-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
                         <path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
@@ -709,6 +729,7 @@
     let isCallActive = false;
     let isListening = false;
     let isTalking = false;
+    let retellClient = null;
 
     function generateUUID() {
         return crypto.randomUUID();
@@ -731,8 +752,8 @@
     }
 
     async function startNewConversation() {
-        currentSessionId = generateUUID();
-        
+        if (!currentSessionId) currentSessionId = generateUUID();
+
         // Hide welcome screen and show chat interface
         chatContainer.querySelector('.brand-header').style.display = 'none';
         chatContainer.querySelector('.new-conversation').style.display = 'none';
@@ -780,14 +801,20 @@
             // Hide typing indicator
             hideTypingIndicator();
 
+            const out = Array.isArray(data) ? (data[0] && data[0].output) : data.output;
             const botMessageDiv = document.createElement('div');
             botMessageDiv.className = 'chat-message bot';
-            botMessageDiv.textContent = Array.isArray(data) ? data[0].output : data.output;
+            botMessageDiv.innerHTML = renderMarkdown(out || "Sorry, I didn't catch that. Could you rephrase?");
             messagesContainer.appendChild(botMessageDiv);
             messagesContainer.scrollTop = messagesContainer.scrollHeight;
         } catch (error) {
             console.error('Error:', error);
             hideTypingIndicator();
+            const errDiv = document.createElement('div');
+            errDiv.className = 'chat-message bot';
+            errDiv.textContent = "I'm having trouble reaching the server right now. Please try again, or email centrobles@gmail.com.";
+            messagesContainer.appendChild(errDiv);
+            messagesContainer.scrollTop = messagesContainer.scrollHeight;
         }
     }
 
@@ -798,8 +825,20 @@
         const voiceCallBtn = document.getElementById('voice-call-btn');
 
         voiceAnimation.className = 'voice-animation';
-        
+        voiceAnimation.innerHTML = '';
+
         switch(state) {
+            case 'connecting':
+                voiceAnimation.classList.add('connecting');
+                voiceStatus.textContent = 'Connecting...';
+                voiceCallBtn.innerHTML = `
+                    <svg class="voice-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                        <path fill="currentColor" d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+                    </svg>
+                    Cancel
+                `;
+                voiceCallBtn.classList.add('end-call');
+                break;
             case 'listening':
                 voiceAnimation.classList.add('listening');
                 voiceStatus.textContent = 'Listening...';
@@ -849,116 +888,91 @@
         }
     }
 
-    async function startVoiceCall() {
-        try {
-            const stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-            mediaRecorder = new MediaRecorder(stream);
-            isCallActive = true;
-            audioChunks = [];
-
-            mediaRecorder.ondataavailable = (event) => {
-                if (event.data.size > 0) {
-                    audioChunks.push(event.data);
-                }
-            };
-
-            mediaRecorder.onstop = async () => {
-                if (audioChunks.length > 0 && isCallActive) {
-                    const audioBlob = new Blob(audioChunks, { type: 'audio/webm' });
-                    audioChunks = [];
-                    await sendAudioToWebhook(audioBlob);
-                }
-            };
-
-            // Start recording
-            mediaRecorder.start();
-            updateVoiceUI('listening');
-            isListening = true;
-
-            // Stop recording after 5 seconds (adjust as needed)
-            setTimeout(() => {
-                if (mediaRecorder && mediaRecorder.state === 'recording') {
-                    mediaRecorder.stop();
-                }
-            }, 5000);
-
-        } catch (error) {
-            console.error('Error accessing microphone:', error);
-            alert('Please allow microphone access to use voice call feature.');
-            updateVoiceUI('idle');
-            isCallActive = false;
-        }
+    // ── Live voice transcript helpers ──
+    function escapeHtml(s) {
+        return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+    }
+    // Minimal, safe markdown -> HTML (escape first, then a few inline patterns)
+    function renderMarkdown(text) {
+        let s = escapeHtml(text);
+        s = s.replace(/\[([^\]]+)\]\((https?:\/\/[^\s)]+)\)/g, '<a href="$2" target="_blank" rel="noopener">$1</a>');
+        s = s.replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>');
+        s = s.replace(/(^|[^*])\*([^*\n]+)\*/g, '$1<em>$2</em>');
+        s = s.replace(/(?:^|\n)((?:[-•] .+(?:\n|$))+)/g, (m, list) => {
+            const items = list.trim().split(/\n/).map(li => '<li>' + li.replace(/^[-•]\s+/, '') + '</li>').join('');
+            return '<ul>' + items + '</ul>';
+        });
+        s = s.replace(/\n/g, '<br>');
+        return s;
+    }
+    function clearVoiceTranscript() {
+        const t = document.getElementById('voice-transcript');
+        if (t) t.innerHTML = '';
+    }
+    function renderVoiceTranscript(turns) {
+        const t = document.getElementById('voice-transcript');
+        if (!t || !Array.isArray(turns)) return;
+        t.innerHTML = turns
+            .filter(x => x && x.content)
+            .map(x => `<div class="chat-message ${x.role === 'agent' ? 'bot' : 'user'}">${escapeHtml(x.content)}</div>`)
+            .join('');
+        t.scrollTop = t.scrollHeight;
+    }
+    function addVoiceNote(text) {
+        const t = document.getElementById('voice-transcript');
+        if (!t) return;
+        const d = document.createElement('div');
+        d.className = 'chat-message bot';
+        d.textContent = text;
+        t.appendChild(d);
+        t.scrollTop = t.scrollHeight;
     }
 
-    async function sendAudioToWebhook(audioBlob) {
-        updateVoiceUI('thinking');
-        isTalking = false;
-        isListening = false;
-
+    // ── Voice call via Retell Web SDK (real-time) ──
+    async function startVoiceCall() {
+        if (!config.retell || !config.retell.tokenUrl) {
+            updateVoiceUI('idle');
+            addVoiceNote('Voice is not configured yet. You can use text instead.');
+            return;
+        }
         try {
-            // Send as pure multipart/form-data: 'data' binary + optional 'sessionId'
-            const formData = new FormData();
-            formData.append('data', audioBlob, 'voice.webm');
-            if (currentSessionId) {
-                formData.append('sessionId', currentSessionId);
-            } else {
-                currentSessionId = generateUUID();
-                formData.append('sessionId', currentSessionId);
-            }
-            const response = await fetch(N8N_VOICE_WEBHOOK_URL, {
+            updateVoiceUI('connecting');
+            if (!currentSessionId) currentSessionId = generateUUID();
+
+            // 1) Get a short-lived web-call access token from n8n (keeps the Retell key server-side)
+            const tokenResp = await fetch(config.retell.tokenUrl, {
                 method: 'POST',
-                body: formData
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ sessionId: currentSessionId })
+            });
+            const tokenData = await tokenResp.json();
+            const accessToken = tokenData.access_token;
+            if (!accessToken) throw new Error('No access token returned');
+
+            // 2) Lazy-load the Retell Web SDK and start the call
+            const { RetellWebClient } = await import('https://cdn.jsdelivr.net/npm/retell-client-js-sdk/+esm');
+            retellClient = new RetellWebClient();
+            clearVoiceTranscript();
+
+            retellClient.on('call_started', () => { isCallActive = true; updateVoiceUI('listening'); });
+            retellClient.on('call_ended', () => { isCallActive = false; updateVoiceUI('idle'); });
+            retellClient.on('agent_start_talking', () => updateVoiceUI('talking'));
+            retellClient.on('agent_stop_talking', () => { if (isCallActive) updateVoiceUI('listening'); });
+            retellClient.on('update', (update) => { if (update && update.transcript) renderVoiceTranscript(update.transcript); });
+            retellClient.on('error', (err) => {
+                console.error('Retell error:', err);
+                addVoiceNote('Sorry, the call dropped. Please try again.');
+                endVoiceCall();
             });
 
-            const contentType = response.headers.get('content-type') || '';
-
-            // Switch to talking state when we have the response
-            updateVoiceUI('talking');
-            isTalking = true;
-
-            if (contentType.includes('application/json')) {
-                const data = await response.json();
-                if (data.audioResponse) {
-                    await playAudioResponse(data.audioResponse);
-                }
-            } else if (contentType.startsWith('audio/')) {
-                const blob = await response.blob();
-                await playAudioBlob(blob);
-            }
-
-            // Continue listening if call is still active
-            if (isCallActive && mediaRecorder) {
-                isTalking = false;
-                audioChunks = [];
-                mediaRecorder.start();
-                updateVoiceUI('listening');
-                isListening = true;
-
-                setTimeout(() => {
-                    if (mediaRecorder && mediaRecorder.state === 'recording') {
-                        mediaRecorder.stop();
-                    }
-                }, 5000);
-            }
-
+            await retellClient.startCall({ accessToken });
         } catch (error) {
-            console.error('Error sending audio:', error);
-            if (isCallActive) {
-                // Retry listening
-                isTalking = false;
-                if (mediaRecorder) {
-                    audioChunks = [];
-                    mediaRecorder.start();
-                    updateVoiceUI('listening');
-                    isListening = true;
-                    
-                    setTimeout(() => {
-                        if (mediaRecorder && mediaRecorder.state === 'recording') {
-                            mediaRecorder.stop();
-                        }
-                    }, 5000);
-                }
-            }
+            console.error('Error starting voice call:', error);
+            updateVoiceUI('idle');
+            const denied = error && (error.name === 'NotAllowedError' || /permission|denied|microphone/i.test(error.message || ''));
+            addVoiceNote(denied
+                ? 'I need microphone access to talk. Please allow it in your browser and try again.'
+                : 'Could not start the call. Please try again, or switch to text.');
         }
     }
 
@@ -992,20 +1006,17 @@
         isCallActive = false;
         isListening = false;
         isTalking = false;
-        
-        if (mediaRecorder && mediaRecorder.state !== 'inactive') {
-            mediaRecorder.stop();
-            mediaRecorder.stream.getTracks().forEach(track => track.stop());
+
+        if (retellClient) {
+            try { retellClient.stopCall(); } catch (e) { /* noop */ }
+            retellClient = null;
         }
-        
-        mediaRecorder = null;
-        audioChunks = [];
         updateVoiceUI('idle');
     }
 
     function startNewVoiceSession() {
-        currentSessionId = generateUUID();
-        
+        if (!currentSessionId) currentSessionId = generateUUID();
+
         // Hide welcome screen and show voice interface
         chatContainer.querySelector('.brand-header').style.display = 'none';
         chatContainer.querySelector('.new-conversation').style.display = 'none';

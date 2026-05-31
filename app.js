@@ -15,6 +15,13 @@
     setTimeout(() => intro.remove(), 1700);
   });
 
+  /* ── chat hint opens the chat widget ── */
+  const chatHint = $('#chatHint');
+  if (chatHint) chatHint.addEventListener('click', () => {
+    const toggle = document.querySelector('.n8n-chat-widget .chat-toggle');
+    if (toggle) toggle.click();
+  });
+
   /* ── year ── */
   const yr = $('#year'); if (yr) yr.textContent = new Date().getFullYear();
 
