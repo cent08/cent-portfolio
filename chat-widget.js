@@ -923,6 +923,36 @@
         s = s.replace(/\n/g, '<br>');
         return s;
     }
+    // Group phone digits for readability (PH mobile aware): 09172345678 -> 0917 234 5678.
+    function fmtPhone(raw) {
+        const d = String(raw).replace(/\D/g, '');
+        if (/^09\d{9}$/.test(d)) return d.slice(0, 4) + ' ' + d.slice(4, 7) + ' ' + d.slice(7);          // 0917 234 5678
+        if (/^639\d{9}$/.test(d)) { const m = d.slice(2); return '+63 ' + m.slice(0, 3) + ' ' + m.slice(3, 6) + ' ' + m.slice(6); } // +63 917 234 5678
+        if (/^9\d{9}$/.test(d)) return d.slice(0, 3) + ' ' + d.slice(3, 6) + ' ' + d.slice(6);            // 917 234 5678
+        return String(raw);
+    }
+    // Tidy phone numbers in the transcript: collapse spoken digits to numbers, then group nicely.
+    function prettifyPhone(text) {
+        const map = { zero: '0', oh: '0', one: '1', two: '2', three: '3', four: '4', five: '5', six: '6', seven: '7', eight: '8', nine: '9' };
+        let s = String(text == null ? '' : text);
+        // 1) spoken digit words -> digits (5+ run so normal speech is untouched), then format
+        const re = /\b((?:(?:double|triple)\s+)?(?:zero|oh|one|two|three|four|five|six|seven|eight|nine)(?:[\s-]+(?:(?:double|triple)\s+)?(?:zero|oh|one|two|three|four|five|six|seven|eight|nine)){4,})\b/gi;
+        s = s.replace(re, (run) => {
+            const words = run.toLowerCase().split(/[\s-]+/);
+            let out = '';
+            for (let i = 0; i < words.length; i++) {
+                let mult = 1;
+                if (words[i] === 'double') { mult = 2; i++; }
+                else if (words[i] === 'triple') { mult = 3; i++; }
+                const dg = map[words[i]];
+                if (dg != null) out += dg.repeat(mult);
+            }
+            return fmtPhone(out);
+        });
+        // 2) already-digit PH numbers -> grouped
+        s = s.replace(/(\+?639\d{9}|09\d{9})\b/g, (m) => fmtPhone(m));
+        return s;
+    }
     function clearVoiceTranscript() {
         const t = document.getElementById('voice-transcript');
         if (t) t.innerHTML = '';
@@ -932,7 +962,7 @@
         if (!t || !Array.isArray(turns)) return;
         t.innerHTML = turns
             .filter(x => x && x.content)
-            .map(x => `<div class="chat-message ${x.role === 'agent' ? 'bot' : 'user'}">${escapeHtml(prettifyEmail(x.content))}</div>`)
+            .map(x => `<div class="chat-message ${x.role === 'agent' ? 'bot' : 'user'}">${escapeHtml(prettifyPhone(prettifyEmail(x.content)))}</div>`)
             .join('');
         t.scrollTop = t.scrollHeight;
     }
