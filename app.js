@@ -22,6 +22,31 @@
     if (toggle) toggle.click();
   });
 
+  /* ── floating voice-agent badge ── */
+  const voiceBadge = $('#voiceBadge');
+  if (voiceBadge) {
+    const hideBadge = () => voiceBadge.classList.add('hidden');
+    if (localStorage.getItem('vbDismissed')) {
+      hideBadge();
+    } else {
+      // reveal after the page settles so it draws the eye
+      setTimeout(() => voiceBadge.classList.add('show'), 2200);
+    }
+    const openVoice = () => {
+      const container = document.querySelector('.n8n-chat-widget .chat-container');
+      const toggle = document.querySelector('.n8n-chat-widget .chat-toggle');
+      if (toggle && container && !container.classList.contains('open')) toggle.click();
+      setTimeout(() => { const v = document.querySelector('.n8n-chat-widget .new-voice-btn'); if (v) v.click(); }, 220);
+      hideBadge();
+    };
+    voiceBadge.addEventListener('click', (e) => { if (e.target.closest('.voice-badge__close')) return; openVoice(); });
+    voiceBadge.addEventListener('keydown', (e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openVoice(); } });
+    const vbClose = $('#voiceBadgeClose');
+    if (vbClose) vbClose.addEventListener('click', (e) => { e.stopPropagation(); hideBadge(); localStorage.setItem('vbDismissed', '1'); });
+    // also hide if the user opens the widget via the bubble itself
+    document.addEventListener('click', (e) => { if (e.target.closest('.n8n-chat-widget .chat-toggle')) hideBadge(); });
+  }
+
   /* ── year ── */
   const yr = $('#year'); if (yr) yr.textContent = new Date().getFullYear();
 

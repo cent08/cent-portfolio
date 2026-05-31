@@ -419,6 +419,23 @@
     @keyframes hintshine { 0% { left: -45%; } 45%,100% { left: 130%; } }
     @keyframes hintarrow { 0%,100% { transform: translate(0,0); } 50% { transform: translate(3px,3px); } }
 
+    /* floating voice-agent badge near the chat bubble */
+    .voice-badge { position: fixed; bottom: 94px; right: 22px; z-index: 998; display: flex; align-items: center; gap: 11px; padding: 11px 12px 11px 11px; max-width: 252px; background: var(--navy-ink); color: #fff; border-radius: 16px; box-shadow: var(--shadow-card); cursor: pointer; opacity: 0; transform: translateY(12px); transition: opacity .45s var(--ease), transform .45s var(--ease); }
+    .voice-badge.show { opacity: 1; transform: none; animation: vbbob 3.4s ease-in-out infinite 0.6s; }
+    .voice-badge.hidden { display: none; }
+    .voice-badge::after { content: ''; position: absolute; bottom: -5px; right: 26px; width: 12px; height: 12px; background: var(--navy-ink); transform: rotate(45deg); }
+    .voice-badge__ic { position: relative; width: 32px; height: 32px; border-radius: 50%; background: var(--orange); color: #fff; display: grid; place-items: center; font-size: 17px; flex-shrink: 0; }
+    .voice-badge__ic i { animation: hintpulse 1.8s ease-in-out infinite; }
+    .voice-badge__ic::after { content: ''; position: absolute; top: -1px; right: -1px; width: 10px; height: 10px; border-radius: 50%; background: #21c373; border: 2px solid var(--navy-ink); animation: vbpulse 1.6s ease-out infinite; }
+    .voice-badge__txt { display: flex; flex-direction: column; text-align: left; line-height: 1.25; }
+    .voice-badge__txt span { font-size: 13px; font-weight: 700; color: #fff; }
+    .voice-badge__txt b { font-size: 11px; font-weight: 600; color: var(--orange-hover); margin-top: 1px; }
+    .voice-badge__close { margin-left: 1px; width: 18px; height: 18px; border-radius: 50%; display: grid; place-items: center; color: rgba(255,255,255,0.5); font-size: 12px; flex-shrink: 0; align-self: flex-start; transition: color .2s, background .2s; }
+    .voice-badge__close:hover { color: #fff; background: rgba(255,255,255,0.12); }
+    @keyframes vbbob { 0%,100% { transform: translateY(0); } 50% { transform: translateY(-6px); } }
+    @keyframes vbpulse { 0% { box-shadow: 0 0 0 0 rgba(33,195,115,0.6); } 70%,100% { box-shadow: 0 0 0 7px rgba(33,195,115,0); } }
+    @media (max-width: 480px) { .voice-badge { max-width: 220px; bottom: 90px; } }
+
     /* ════════ FOOTER ════════ */
     .footer { background: var(--navy-ink); border-top: 1px solid rgba(255,255,255,0.10); padding: 38px 0; }
     .footer .container { display: flex; align-items: center; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
@@ -853,6 +870,13 @@
   <!-- ═══ LIGHTBOX ═══ -->
   <div class="lightbox" id="lightbox"><button class="lightbox__close" id="lbClose" aria-label="Close"><i class="ph ph-x"></i></button><img id="lbImg" src="" alt=""></div>
 
+  <!-- ═══ VOICE AGENT BADGE ═══ -->
+  <div class="voice-badge" id="voiceBadge" role="button" tabindex="0" aria-label="Try the AI voice agent">
+    <span class="voice-badge__ic"><i class="ph-fill ph-microphone"></i></span>
+    <span class="voice-badge__txt"><span>Try my AI Voice Agent</span><b>Powered by Retell AI · Call now</b></span>
+    <span class="voice-badge__close" id="voiceBadgeClose" aria-label="Dismiss"><i class="ph ph-x"></i></span>
+  </div>
+
   <!-- ═══ CHAT WIDGET (live n8n assistant) ═══ -->
   <script>
     window.ChatWidgetConfig = {
@@ -873,6 +897,6 @@
   <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
-  <script src="app.js"></script>
+  <script>(function(){var s=document.createElement('script');s.src='app.js?v='+Date.now();document.body.appendChild(s);})();</script>
 </body>
 </html>
