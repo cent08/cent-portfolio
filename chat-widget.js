@@ -892,6 +892,24 @@
     function escapeHtml(s) {
         return String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
     }
+    // Collapse a spoken email ("name at gmail dot com") into real format for display only.
+    function prettifyEmail(text) {
+        const numWord = { zero: '0', one: '1', two: '2', three: '3', four: '4', five: '5', six: '6', seven: '7', eight: '8', nine: '9' };
+        const squash = s => s.toLowerCase()
+            .replace(/\b(zero|one|two|three|four|five|six|seven|eight|nine)\b/g, w => numWord[w])
+            .replace(/\bunderscore\b/g, '_')
+            .replace(/\b(dash|hyphen)\b/g, '-')
+            .replace(/\bdot\b/g, '.')
+            .replace(/[\s]+/g, '');
+        return String(text == null ? '' : text).replace(
+            /\b([a-z0-9][a-z0-9 ._-]*?)\s+at\s+([a-z0-9 ._-]+?)\s+dot\s+(com|net|org|io|co|ph|me|email|gov|edu|app|dev|info|biz)\b/gi,
+            (m, local, domain, tld) => {
+                // drop lead-in words so only the actual address remains
+                const l = local.replace(/^.*\b(?:e-?mail|mail|address|is|it'?s|it\s+is|contact|reach|send|write|message)\s+/i, '');
+                return squash(l) + '@' + squash(domain) + '.' + tld.toLowerCase();
+            }
+        );
+    }
     // Minimal, safe markdown -> HTML (escape first, then a few inline patterns)
     function renderMarkdown(text) {
         let s = escapeHtml(text);
@@ -914,7 +932,7 @@
         if (!t || !Array.isArray(turns)) return;
         t.innerHTML = turns
             .filter(x => x && x.content)
-            .map(x => `<div class="chat-message ${x.role === 'agent' ? 'bot' : 'user'}">${escapeHtml(x.content)}</div>`)
+            .map(x => `<div class="chat-message ${x.role === 'agent' ? 'bot' : 'user'}">${escapeHtml(prettifyEmail(x.content))}</div>`)
             .join('');
         t.scrollTop = t.scrollHeight;
     }
