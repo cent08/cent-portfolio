@@ -383,10 +383,10 @@
     .form-card { background: var(--card); border: 1px solid var(--divider); border-radius: var(--radius-card); box-shadow: var(--shadow-soft); padding: clamp(28px, 3vw, 42px); display: flex; flex-direction: column; }
     .form-card h3 { font-size: clamp(22px, 2.4vw, 28px); font-weight: 800; color: var(--navy); letter-spacing: -0.01em; }
     .form-card .hint { font-size: 14px; color: var(--muted); margin: 8px 0 26px; }
-    .field-row { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
-    .field { display: grid; gap: 8px; margin-bottom: 16px; }
+    .field-row { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 1fr); gap: 16px; }
+    .field { display: grid; gap: 8px; margin-bottom: 16px; min-width: 0; }
     .field label { font-size: 12.5px; font-weight: 600; color: var(--navy); letter-spacing: 0.01em; }
-    .field input, .field textarea { font-family: inherit; font-size: 15px; color: var(--navy); background: var(--white); border: 1.5px solid var(--divider); border-radius: 12px; padding: 13px 15px; transition: border-color .2s, box-shadow .2s; }
+    .field input, .field textarea { font-family: inherit; font-size: 15px; color: var(--navy); background: var(--white); border: 1.5px solid var(--divider); border-radius: 12px; padding: 13px 15px; transition: border-color .2s, box-shadow .2s; width: 100%; min-width: 0; }
     .field textarea { resize: vertical; min-height: 120px; }
     .field input::placeholder, .field textarea::placeholder { color: #8b92a1; }
     .field input:focus, .field textarea:focus { outline: none; border-color: var(--orange); box-shadow: 0 0 0 3px rgba(178, 49, 66,0.12); }
@@ -420,6 +420,7 @@
       .cards--tools { grid-template-columns: 1fr; }
       .carousel { --card-w: 84vw; }
       .carousel__arrow { display: none; }
+      .field-row { grid-template-columns: 1fr; }
       .stats { grid-template-columns: repeat(2, 1fr); gap: 30px 16px; }
       .hero__badge { right: 8px; }
     }
