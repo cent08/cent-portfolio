@@ -116,6 +116,7 @@
   const fb = 'https://www.facebook.com/share/1CLuxwkpgg/';
   const fbLink = `<a href="${fb}" target="_blank" rel="noopener">Cent R Solutions AI</a>`;
   const projects = [
+    { cat:'n8n', t:'AI Voice & Text Agent (Retell + n8n)', d:'A voice and text assistant that answers from a knowledge base, qualifies and captures leads, checks the calendar, and books a 30-minute call. Built with Retell, n8n, Claude and Supabase. The chat assistant on this page is the live build.', loom:'05832adf8a2d4db6b9f5f9d8b3e38725', chips:['Retell','n8n','Claude'] },
     { cat:'n8n', t:'AI LinkedIn Post Automation with Human Review', d:'Generates AI-crafted LinkedIn posts, routes them through a human approval loop over email and WhatsApp, then publishes automatically.', loom:'b63a4fb2cdf34c718bd6c09ddcf02896', chips:['Pattern Systems'] },
     { cat:'n8n', t:'YouTube Video Generation & Publishing Pipeline', d:'Generates scripts, visuals and voiceovers with AI, assembles YouTube-ready videos, and publishes via Telegram bot with credit and billing built in.', loom:'8b93ea4c8aef4dabaa3004ee3540609d', chips:['Pattern Systems'] },
     { cat:'n8n', t:'Smart Job Application Scoring & Categorization', d:'Automatically scores and categorizes job applications based on criteria matching and relevance.', loom:'93b49f8668fc4c9099e14573f4a395f5', chips:['Personal'] },
@@ -192,6 +193,15 @@
       vObserver.observe(buildVideo);
     }
   }
+
+  /* ── "Try it live" on the voice-agent featured card opens the voice call ── */
+  const featTryVoice = $('#featTryVoice');
+  if (featTryVoice) featTryVoice.addEventListener('click', () => {
+    const toggle = document.querySelector('.n8n-chat-widget .chat-toggle');
+    const container = document.querySelector('.n8n-chat-widget .chat-container');
+    if (toggle && container && !container.classList.contains('open')) toggle.click();
+    setTimeout(() => { const v = document.querySelector('.n8n-chat-widget .new-voice-btn'); if (v) v.click(); }, 220);
+  });
 
   /* ── featured project: load Loom inline on play ── */
   const featPlay = $('#featPlay');
