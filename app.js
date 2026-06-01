@@ -374,6 +374,7 @@
   if (form && window.emailjs) {
     emailjs.init('vQodk4O1jTMRLtbqE');
     const msg = $('#cf-msg'), submit = $('#cf-submit');
+    const sent = $('#cf-sent'), again = $('#cf-again');
     form.addEventListener('submit', async (e) => {
       e.preventDefault();
       submit.disabled = true; submit.innerHTML = 'Sending...';
@@ -383,14 +384,20 @@
           form_name: form.name.value, form_email: form.email.value,
           form_subject: form.subject.value, form_message: form.message.value
         });
-        msg.textContent = 'Message sent. Thanks for reaching out, I will get back to you soon.';
-        msg.className = 'form-msg ok'; form.reset();
+        form.reset();
+        form.classList.add('sent');
+        if (sent) sent.hidden = false;
       } catch (err) {
         msg.textContent = 'Something went wrong. Please email centrobles@gmail.com directly.';
         msg.className = 'form-msg err';
       } finally {
         submit.disabled = false; submit.innerHTML = 'Send message <i class="ph ph-paper-plane-tilt"></i>';
       }
+    });
+    if (again) again.addEventListener('click', () => {
+      form.classList.remove('sent');
+      if (sent) sent.hidden = true;
+      msg.className = 'form-msg';
     });
   }
 
