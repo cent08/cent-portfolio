@@ -183,15 +183,21 @@
     .problem__title .accent { color: var(--orange); }
     .problem__body { color: rgba(244,244,237,0.7); font-size: 17px; margin-top: 18px; max-width: 48ch; }
     .problem__list { display: grid; gap: 14px; }
-    .problem__row { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; }
-    .problem__row i { color: var(--orange); font-size: 22px; flex-shrink: 0; margin-top: 1px; }
+    .problem__row { display: flex; gap: 14px; align-items: flex-start; padding: 18px 20px; background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.08); border-radius: 16px; transition: transform .3s var(--ease), background .3s var(--ease), border-color .3s var(--ease); }
+    .problem__row:hover { transform: translateX(5px); background: rgba(255,255,255,0.07); border-color: rgba(178,49,66,0.5); }
+    .problem__row i { color: var(--orange); font-size: 22px; flex-shrink: 0; margin-top: 1px; transition: transform .3s var(--ease); }
+    .problem__row:hover i { animation: iconShake .55s var(--ease); }
+    @keyframes iconShake { 0%,100% { transform: rotate(0); } 18% { transform: rotate(-14deg); } 36% { transform: rotate(12deg); } 54% { transform: rotate(-8deg); } 72% { transform: rotate(6deg); } 88% { transform: rotate(-3deg); } }
     .problem__row p { color: rgba(244,244,237,0.82); font-size: 15px; }
 
     /* ════════ OUTCOMES ════════ */
     .outcomes .container { display: grid; grid-template-columns: 0.9fr 1.1fr; gap: clamp(30px,5vw,64px); align-items: start; }
     .outcomes__list { display: grid; gap: 12px; }
-    .outcome { display: flex; gap: 15px; align-items: center; padding: 18px 22px; background: var(--card); border: 1px solid var(--divider); border-radius: 16px; box-shadow: var(--shadow-soft); }
-    .outcome i { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: rgba(33,195,115,0.14); color: #1aa564; font-size: 18px; flex-shrink: 0; }
+    .outcome { display: flex; gap: 15px; align-items: center; padding: 18px 22px; background: var(--card); border: 1px solid var(--divider); border-radius: 16px; box-shadow: var(--shadow-soft); transition: transform .3s var(--ease), box-shadow .3s var(--ease), border-color .3s var(--ease); }
+    .outcome:hover { transform: translateY(-3px); box-shadow: var(--shadow-card); border-color: rgba(33,195,115,0.4); }
+    .outcome i { width: 30px; height: 30px; border-radius: 9px; display: grid; place-items: center; background: rgba(33,195,115,0.14); color: #1aa564; font-size: 18px; flex-shrink: 0; transition: background .3s var(--ease); }
+    .outcome:hover i { background: rgba(33,195,115,0.24); animation: iconPop .45s var(--ease); }
+    @keyframes iconPop { 0% { transform: scale(1); } 45% { transform: scale(1.28) rotate(-8deg); } 100% { transform: scale(1) rotate(0); } }
     .outcome p { font-size: 15.5px; font-weight: 500; color: var(--navy); }
 
     /* ════════ PROCESS (numbered steps) ════════ */
