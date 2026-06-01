@@ -576,6 +576,60 @@
     `;
     document.head.appendChild(extraStyles);
 
+    // Premium look: Poppins type, brand palette, softer shadows, cleaner bubbles
+    const premiumStyles = document.createElement('style');
+    premiumStyles.textContent = `
+        .n8n-chat-widget, .n8n-chat-widget * { font-family: 'Poppins', system-ui, -apple-system, sans-serif; }
+        /* toggle bubble */
+        .n8n-chat-widget .chat-toggle { width: 62px; height: 62px; border-radius: 50%; background: linear-gradient(150deg, #C9505F, #B23142); border: none; box-shadow: 0 16px 36px -10px rgba(178,49,66,0.6), inset 0 1px 0 rgba(255,255,255,0.28); transition: transform .3s cubic-bezier(.22,1,.36,1), box-shadow .3s cubic-bezier(.22,1,.36,1); }
+        .n8n-chat-widget .chat-toggle:hover { transform: translateY(-3px) scale(1.04); box-shadow: 0 22px 44px -12px rgba(178,49,66,0.7); }
+        .n8n-chat-widget .chat-toggle svg { width: 28px; height: 28px; fill: #fff; }
+        /* container */
+        .n8n-chat-widget .chat-container { border-radius: 22px; border: 1px solid rgba(11,30,63,0.10); box-shadow: 0 44px 110px -34px rgba(6,12,26,0.45); background: #FBFBF6; overflow: hidden; }
+        /* header */
+        .n8n-chat-widget .brand-header { padding: 17px 20px; background: #fff; border-bottom: 1px solid rgba(11,30,63,0.08); }
+        .n8n-chat-widget .brand-header img { width: 34px; height: 34px; border-radius: 9px; }
+        .n8n-chat-widget .brand-header span { font-weight: 700; font-size: 16px; letter-spacing: -0.01em; color: #0B1E3F; }
+        .n8n-chat-widget .close-button, .n8n-chat-widget .back-button { color: #5A6479; border-radius: 9px; transition: color .2s, background .2s; }
+        .n8n-chat-widget .close-button:hover, .n8n-chat-widget .back-button:hover { color: #0B1E3F; background: rgba(11,30,63,0.06); }
+        /* welcome screen */
+        .n8n-chat-widget .new-conversation { padding: 30px 22px; gap: 12px; }
+        .n8n-chat-widget .welcome-text { font-weight: 700; font-size: 20px; letter-spacing: -0.01em; color: #0B1E3F; margin-bottom: 6px; }
+        .n8n-chat-widget .response-text { color: #5A6479; font-size: 12.5px; }
+        .n8n-chat-widget .new-chat-btn, .n8n-chat-widget .new-voice-btn { border-radius: 14px; font-weight: 600; font-size: 14px; padding: 14px 18px; gap: 9px; transition: transform .25s cubic-bezier(.22,1,.36,1), box-shadow .25s, border-color .25s, color .25s; }
+        .n8n-chat-widget .new-chat-btn { background: linear-gradient(150deg, #C9505F, #B23142); color: #fff; border: none; box-shadow: 0 10px 26px -10px rgba(178,49,66,0.55); }
+        .n8n-chat-widget .new-voice-btn { background: #fff; color: #0B1E3F; border: 1.5px solid rgba(11,30,63,0.14); }
+        .n8n-chat-widget .new-chat-btn:hover { transform: translateY(-2px); box-shadow: 0 14px 30px -10px rgba(178,49,66,0.6); }
+        .n8n-chat-widget .new-voice-btn:hover { transform: translateY(-2px); border-color: #B23142; color: #B23142; }
+        /* messages */
+        .n8n-chat-widget .chat-messages { padding: 18px; gap: 11px; }
+        .n8n-chat-widget .chat-message { font-size: 14px; line-height: 1.55; padding: 11px 15px; border-radius: 16px; max-width: 82%; box-shadow: 0 6px 18px -12px rgba(11,30,63,0.22); }
+        .n8n-chat-widget .chat-message.user { background: linear-gradient(150deg, #C9505F, #B23142); color: #fff; border-bottom-right-radius: 5px; }
+        .n8n-chat-widget .chat-message.bot { background: #fff; color: #243a5e; border: 1px solid rgba(11,30,63,0.08); border-bottom-left-radius: 5px; }
+        /* input */
+        .n8n-chat-widget .chat-input { padding: 13px 14px; gap: 10px; background: #fff; border-top: 1px solid rgba(11,30,63,0.08); }
+        .n8n-chat-widget .chat-input textarea { border: 1.5px solid rgba(11,30,63,0.12); border-radius: 13px; padding: 11px 14px; font-size: 14px; background: #FBFBF6; color: #0B1E3F; transition: border-color .2s, box-shadow .2s, background .2s; }
+        .n8n-chat-widget .chat-input textarea:focus { outline: none; border-color: #B23142; box-shadow: 0 0 0 3px rgba(178,49,66,0.12); background: #fff; }
+        .n8n-chat-widget .chat-input textarea::placeholder { color: #8b92a1; }
+        .n8n-chat-widget .chat-input button { background: linear-gradient(150deg, #C9505F, #B23142); border: none; border-radius: 12px; padding: 0 18px; font-weight: 600; color: #fff; box-shadow: 0 8px 20px -8px rgba(178,49,66,0.5); transition: transform .2s, box-shadow .2s; }
+        .n8n-chat-widget .chat-input button:hover { transform: translateY(-1px); box-shadow: 0 12px 26px -8px rgba(178,49,66,0.6); }
+        /* voice call button */
+        .n8n-chat-widget .voice-call-btn { background: linear-gradient(150deg, #C9505F, #B23142); border-radius: 999px; box-shadow: 0 12px 28px -10px rgba(178,49,66,0.5); }
+        .n8n-chat-widget .voice-call-btn.end-call { background: linear-gradient(150deg, #ef4444, #dc2626); box-shadow: 0 12px 28px -10px rgba(239,68,68,0.45); }
+        .n8n-chat-widget .voice-status-text { color: #5A6479; }
+        /* footer */
+        .n8n-chat-widget .chat-footer { padding: 10px; background: #fff; border-top: 1px solid rgba(11,30,63,0.06); }
+        .n8n-chat-widget .chat-footer a { color: rgba(11,30,63,0.42); font-size: 11px; font-weight: 500; letter-spacing: 0.02em; }
+        .n8n-chat-widget .chat-footer a:hover { color: #B23142; }
+        /* thin premium scrollbars */
+        .n8n-chat-widget .chat-messages::-webkit-scrollbar, .n8n-chat-widget .voice-transcript::-webkit-scrollbar { width: 6px; }
+        .n8n-chat-widget .chat-messages::-webkit-scrollbar-thumb, .n8n-chat-widget .voice-transcript::-webkit-scrollbar-thumb { background: rgba(11,30,63,0.16); border-radius: 3px; }
+        .n8n-chat-widget .chat-messages::-webkit-scrollbar-track, .n8n-chat-widget .voice-transcript::-webkit-scrollbar-track { background: transparent; }
+        /* typing indicator dots in brand color */
+        .n8n-chat-widget .typing-indicator span { background: #B23142 !important; }
+    `;
+    document.head.appendChild(premiumStyles);
+
     // Default configuration
     const defaultConfig = {
         webhook: {
@@ -588,7 +642,7 @@
             welcomeText: '',
             responseTimeText: '',
             poweredBy: {
-                text: 'Powered by n8n',
+                text: 'Powered by Retell & n8n',
                 link: 'https://n8n.partnerlinks.io/m8a94i19zhqq?utm_source=nocodecreative.io'
             }
         },
