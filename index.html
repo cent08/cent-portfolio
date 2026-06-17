@@ -139,6 +139,14 @@
     .hero__badge .dot { width: 9px; height: 9px; border-radius: 50%; background: #21c373; box-shadow: 0 0 0 4px rgba(33,195,115,.18); }
     .hero__badge b { font-size: 13px; font-weight: 700; color: var(--navy); display: block; line-height: 1.2; }
     .hero__badge span { font-size: 11px; color: var(--muted); }
+    .hero__cert {
+      position: absolute; bottom: 18px; left: -14px; background: var(--white); border-radius: 16px;
+      padding: 11px 16px; box-shadow: var(--shadow-card); display: flex; align-items: center; gap: 10px;
+      animation: badgefloat 5s ease-in-out infinite 1.4s;
+    }
+    .hero__cert__ic { color: var(--orange); font-size: 22px; display: grid; place-items: center; }
+    .hero__cert b { font-size: 13px; font-weight: 700; color: var(--navy); display: block; line-height: 1.2; }
+    .hero__cert span { font-size: 11px; color: var(--muted); }
     .hero__chip {
       position: absolute; bottom: 24px; left: -22px; background: var(--navy-ink); color: var(--cream);
       border-radius: 16px; padding: 12px 16px; box-shadow: var(--shadow-card); animation: badgefloat 6s ease-in-out infinite reverse;
@@ -480,6 +488,7 @@
       .field-row { grid-template-columns: 1fr; }
       .stats { grid-template-columns: repeat(2, 1fr); gap: 30px 16px; }
       .hero__badge { right: 8px; }
+      .hero__cert { left: 8px; }
     }
     @media (prefers-reduced-motion: reduce) {
       *, *::before, *::after { animation-duration: .01ms !important; transition-duration: .01ms !important; animation-iteration-count: 1 !important; }
@@ -557,6 +566,10 @@
             <div class="hero__badge">
               <span class="dot"></span>
               <div><b>Open to work</b><span>Part-time technical VA</span></div>
+            </div>
+            <div class="hero__cert">
+              <span class="hero__cert__ic"><i class="ph-fill ph-seal-check"></i></span>
+              <div><b>HL Accelerator</b><span>Certified Builder</span></div>
             </div>
           </div>
         </div>
@@ -804,6 +817,7 @@
               <div class="tl-cert"><a href="https://www.udemy.com/certificate/UC-5181d1ff-3197-4069-a50a-41a963cb5a9b/" target="_blank" rel="noopener">Udemy</a><p>Automation Mastery: Zapier + n8n for AI &amp; Workflow</p></div>
               <div class="tl-cert"><a href="https://www.udemy.com/certificate/UC-d95817a7-0db5-48c9-bbc1-b9dec2ee5bcf/" target="_blank" rel="noopener">Udemy</a><p>Master AI Automation: Build Real AI Agents from Scratch</p></div>
               <div class="tl-cert"><a href="https://drive.google.com/drive/folders/1fRBMf9dVGsPbHGbIqbt9LjMZ2N7-fMki?usp=sharing" target="_blank" rel="noopener">Cert</a><p>Technical Virtual Assistant Course</p></div>
+              <div class="tl-cert"><a href="https://www.facebook.com/hlaccelerator/" target="_blank" rel="noopener">HL Accelerator</a><p>Certified Builder - built a full CRM in GoHighLevel</p></div>
             </div>
           </div>
         </div>
